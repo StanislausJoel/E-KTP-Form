@@ -7,6 +7,8 @@ import java.awt.*;
 
 public class PrintKTP {
 
+    private JFrame frame;
+
     public PrintKTP(KTP ktp) {
         showKTP(ktp);
     }
@@ -25,7 +27,7 @@ public class PrintKTP {
         int start_x = screenWidth / 2 - (FRAME_WIDTH / 2); // SET START LOCATION FOR X
         int start_y = screenHeight / 2 - (FRAME_HEIGHT / 2); // SET START LOCATION FOR Y
         
-        JFrame frame = new JFrame("Cetak KTP");
+        frame = new JFrame("Cetak KTP");
         frame.setBounds(start_x, start_y, FRAME_WIDTH, FRAME_HEIGHT); // SET FRAME BOUND
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -78,9 +80,18 @@ public class PrintKTP {
         signatureLabel.setBounds(690, 440, 240, 80);
         panel.add(signatureLabel);
 
+        JButton backMainMenu = new JButton("Back To Main Menu");
+        backMainMenu.setBounds(50, 505, 200, 30);
+        panel.add(backMainMenu);
+
+        backMainMenu.addActionListener(e -> {
+            frame.dispose();
+            new MainMenu();
+        });
+
         frame.add(panel);
         frame.setVisible(true);
-        
+
     }
 
 
