@@ -1,12 +1,12 @@
 package Main;
 
-import View.FormInputData;
+import View.MainMenu;
 
 public class Main {
     
     public static void main(String[] args) {
         
-        new FormInputData();
+        new MainMenu();
 
     }
 
