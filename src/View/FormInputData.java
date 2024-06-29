@@ -1,6 +1,7 @@
 package View;
 
 import Controller.Controller;
+import Controller.DBController;
 import Model.Class.KTP;
 import Model.Enum.JenisAgama;
 import Model.Enum.JenisKelamin;
@@ -27,13 +28,13 @@ public class FormInputData {
     private File photoFile;
     private File signatureFile;
 
-    public FormInputData() {
+    public FormInputData(int actionValue, KTP myKtp) {
 
-        showForm();
+        showForm(actionValue, myKtp);
 
     }
 
-    public void showForm() {
+    public void showForm(int actionValue, KTP myKtp) {
 
         Toolkit toolkit = Toolkit.getDefaultToolkit(); // INIT TOOLKIT
         Dimension screenSize = toolkit.getScreenSize(); // GET MY SCREEN SIZE
@@ -444,11 +445,9 @@ public class FormInputData {
                     String tempatLahir = tempatLahirField.getText();
 
                     Date tanggalLahir = (Date) datePicker.getModel().getValue();
-                    
                     LocalDate tanggalLahirlocalDate = tanggalLahir.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
-                    
                     String tanggalLahirlocalDateFormatted = tanggalLahirlocalDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
                     System.out.println(tanggalLahir);
@@ -468,18 +467,15 @@ public class FormInputData {
                     String kotaPembuatan = kotaPembuatanField.getText();
 
                     Date tanggalPembuatan = (Date) tglPembuatanPicker.getModel().getValue();
-
                     LocalDate tanggalPembuatanlocalDate = tanggalPembuatan.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
-                    
                     String tanggalPembuatanlocalDateFormatted = tanggalPembuatanlocalDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
 
-                    // Create KTP object using controller
                     KTP ktp = Controller.createKTP(nik, nama, tempatLahir, tanggalLahirlocalDateFormatted, jenisKelamin, golDarah, alamat, rt, rw, kelDesa, kecamatan, agama, statusPerkawinan, 
-                    pekerjaan, kewarganegaraan, wargaNegaraAsal, photoFile, signatureFile, berlakuHingga, kotaPembuatan, tanggalPembuatanlocalDateFormatted);
-
-                    // Controller.addKtp(ktp);
+                    pekerjaan, kewarganegaraan, wargaNegaraAsal, photoFile, signatureFile, berlakuHingga, kotaPembuatan, tanggalPembuatanlocalDateFormatted, 1);
+                    
+                    myFrame.dispose();
 
                     new PrintKTP(ktp);
 
@@ -494,6 +490,222 @@ public class FormInputData {
             }
 
         });
+        
+        JButton updateButton = new JButton("UPDATE");
+        updateButton.setBounds(950, 660, 200, 30);
+        formPanel.add(updateButton);
+
+        updateButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                String nik = nikField.getText();
+                String nama = namaField.getText();
+                String tempatLahir = tempatLahirField.getText();
+
+                Date tanggalLahir = (Date) datePicker.getModel().getValue();
+                LocalDate tanggalLahirlocalDate = tanggalLahir.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+                String tanggalLahirlocalDateFormatted = tanggalLahirlocalDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+                JenisKelamin jenisKelamin = priaRadio.isSelected() ? JenisKelamin.PRIA : JenisKelamin.WANITA;
+                String golDarah = bloodGroup.getSelection().getActionCommand();
+                String alamat = alamatField.getText();
+                String rt = rtField.getText();
+                String rw = rwField.getText();
+                String kelDesa = kelurahanField.getText();
+                String kecamatan = kecamatanField.getText();
+                JenisAgama agama = Controller.getJenisAgama(String.valueOf(agamaComboBox.getSelectedItem()));
+                StatusPerkawinan statusPerkawinan = Controller.getStatusPerkawinan(String.valueOf(perkawinanBox.getSelectedItem()));
+                String pekerjaan = Controller.getSelectedJobs(karyawanSwastaCheck, pnsCheck, wiraswastaCheck, akademisiCheck, pengangguranCheck);
+                String wargaNegaraAsal = wnaRadio.isSelected() ? citizenshipField.getText() : null;
+                String kewarganegaraan = Controller.getCitizenship(citizenshipGroup.getSelection().getActionCommand(), wargaNegaraAsal);
+                String berlakuHingga = tglBerlakuField.getText();
+                String kotaPembuatan = kotaPembuatanField.getText();
+
+                Date tanggalPembuatan = (Date) tglPembuatanPicker.getModel().getValue();
+                LocalDate tanggalPembuatanlocalDate = tanggalPembuatan.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+                String tanggalPembuatanlocalDateFormatted = tanggalPembuatanlocalDate.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+                KTP ktp = Controller.createKTP(nik, nama, tempatLahir, tanggalLahirlocalDateFormatted, jenisKelamin, golDarah, alamat, rt, rw, kelDesa, kecamatan, agama, statusPerkawinan, 
+                pekerjaan, kewarganegaraan, wargaNegaraAsal, photoFile, signatureFile, berlakuHingga, kotaPembuatan, tanggalPembuatanlocalDateFormatted, 2);
+                    
+                myFrame.dispose();
+
+                JOptionPane.showMessageDialog(myFrame, "Berhasil edit data!", "Notifikasi", JOptionPane.INFORMATION_MESSAGE);
+
+                new PrintKTP(ktp);
+
+            }
+
+        });
+
+        JButton deleteButton = new JButton("DELETE");
+        deleteButton.setBounds(720, 660, 200, 30);
+        formPanel.add(deleteButton);
+
+        deleteButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                
+                String nik = nikField.getText();
+                
+                int option = JOptionPane.showConfirmDialog(myFrame, "Apakah Anda yakin ingin menghapus data ?",
+                        "Konfirmasi Penghapusan", JOptionPane.YES_NO_OPTION);
+                
+                if (option == JOptionPane.YES_OPTION) {
+                    
+                    myFrame.dispose();
+                    boolean deleteSuccess = DBController.deleteData(nik);
+
+                    if (deleteSuccess) {
+
+                        JOptionPane.showMessageDialog(myFrame, "Data dengan NIK " + nik + " berhasil dihapus.");
+
+                    } 
+                    else {
+
+                        JOptionPane.showMessageDialog(myFrame, "Gagal menghapus data dengan NIK " + nik + ".");
+
+                    }
+
+                    new MainMenu();
+
+                }
+
+            }
+
+        });
+
+        JButton mainMenuButton = new JButton("BACK TO MAIN MENU");
+        mainMenuButton.setBounds(50, 660, 250, 30);
+        formPanel.add(mainMenuButton);
+
+        mainMenuButton.addActionListener(e -> {
+            myFrame.dispose();
+            new MainMenu();
+        });
+
+        if (actionValue == 1) {
+            
+            submitButton.setVisible(true);
+            updateButton.setVisible(false);
+            deleteButton.setVisible(false);
+
+        }
+        else {
+
+            submitButton.setVisible(false);
+            updateButton.setVisible(true);
+            deleteButton.setVisible(true);
+
+            nikField.setText(myKtp.getNik());
+            namaField.setText(myKtp.getNama());
+            tempatLahirField.setText(myKtp.getTempatLahir());
+
+            String tanggalLahirString = myKtp.getTanggalLahir();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate tanggalLahirLocalDate = LocalDate.parse(tanggalLahirString, formatter);
+            Date tanggalLahir = Date.from(tanggalLahirLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            model.setValue(tanggalLahir);
+
+
+            if (myKtp.getJenisKelamin() == JenisKelamin.PRIA) {
+
+                priaRadio.setSelected(true);
+
+            } 
+            else {
+
+                wanitaRadio.setSelected(true);
+
+            }
+
+            String golDarah = myKtp.getGolDarah();
+
+            switch (golDarah) {
+                case "A":
+                    aRadio.setSelected(true);
+                    break;
+                case "B":
+                    bRadio.setSelected(true);
+                    break;
+                case "O":
+                    oRadio.setSelected(true);
+                    break;
+                case "AB":
+                    abRadio.setSelected(true);
+                    break;
+            }
+
+            alamatField.setText(myKtp.getAlamat());
+            rtField.setText(myKtp.getRt());
+            rwField.setText(myKtp.getRw());
+            kelurahanField.setText(myKtp.getKelDesa());
+            kecamatanField.setText(myKtp.getKecamatan());
+
+            agamaComboBox.setSelectedItem(myKtp.getAgama().toString());
+
+            perkawinanBox.setSelectedItem(myKtp.getStatusPerkawinan().toString());
+
+            String[] listJobs = Controller.setSelectedJobs(myKtp.getPekerjaan());
+
+            for (int i = 0; i < listJobs.length; i++) {
+
+                switch (listJobs[i]) {
+                    case "KARYAWAN SWASTA":
+                        karyawanSwastaCheck.setSelected(true);
+                        break;
+                    case "PNS":
+                        pnsCheck.setSelected(true);
+                        break;
+                    case "WIRASWASTA":
+                        wiraswastaCheck.setSelected(true);
+                        break;
+                    case "AKADEMISI":
+                        akademisiCheck.setSelected(true);
+                        break;
+                    case "PENGANGGURAN":
+                        pengangguranCheck.setSelected(true);
+                        break;
+    
+                }
+    
+            }
+
+            String kewarganegaraan = myKtp.getKewarganegaraan();
+            if (kewarganegaraan.equals("WNI")) {
+
+                wniRadio.setSelected(true);
+                citizenshipField.setVisible(false);
+
+            } 
+            else {
+
+                wnaRadio.setSelected(true);
+                citizenshipField.setVisible(true);
+                citizenshipField.setText(myKtp.getWargaNegaraAsal());
+                
+            }
+
+            photoFile = myKtp.getFotoFilePath();
+            signatureFile = myKtp.getTandaTanganFilePath();
+
+            tglBerlakuField.setText(myKtp.getBerlakuHingga());
+            kotaPembuatanField.setText(myKtp.getKotaPembuatan());
+
+            String tanggalPembuatanString = myKtp.getTanggalPembuatan();
+            DateTimeFormatter tanggalPembuatanformatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+            LocalDate tanggalPembuatanLocalDate = LocalDate.parse(tanggalPembuatanString, tanggalPembuatanformatter);
+            Date tanggalPembuatan = Date.from(tanggalPembuatanLocalDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            tglPembuatanmodel.setValue(tanggalPembuatan);
+
+        }
 
         myFrame.add(formPanel); // ADD PANEL TO FRAME
 
