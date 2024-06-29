@@ -46,12 +46,19 @@ public class PrintKTP {
         addLabelAndValue(panel, "Jenis Kelamin", ktp.getJenisKelamin().toString(), 50, 200);
 
         addLabelPlain(panel, "Gol. Darah", 490, 200, 100, 25);
-        addLabelPlain(panel, ": " + ktp.getGolDarah(), 580, 200, 100, 25);
+        addLabelPlain(panel, " : " + ktp.getGolDarah(), 580, 200, 100, 25);
 
         addLabelAndValue(panel, "Alamat", ktp.getAlamat(), 50, 230);
-        addLabelAndValue(panel, "RT/RW", ktp.getRt() + "/" + ktp.getRw(), 100, 260);
-        addLabelAndValue(panel, "Kel/Desa", ktp.getKelDesa(), 100, 290);
-        addLabelAndValue(panel, "Kecamatan", ktp.getKecamatan(), 100, 320);
+
+        addLabelPlain(panel, "RT/RW", 100, 260, 100, 25);
+        addLabelPlain(panel, " : " + ktp.getRt() + "/" + ktp.getRw(), 300, 260, 300, 25);
+
+        addLabelPlain(panel, "Kel/Desa", 100, 290, 100, 25);
+        addLabelPlain(panel, " : " + ktp.getKelDesa(), 300, 290, 300, 25);
+
+        addLabelPlain(panel, "Kecamatan", 100, 320, 100, 25);
+        addLabelPlain(panel, " : " + ktp.getKecamatan(), 300, 320, 300, 25);
+
         addLabelAndValue(panel, "Agama", ktp.getAgama().toString(), 50, 350);
         addLabelAndValue(panel, "Status Perkawinan", ktp.getStatusPerkawinan().toString(), 50, 380);
         addLabelAndValue(panel, "Pekerjaan", ktp.getPekerjaan(), 50, 410);
