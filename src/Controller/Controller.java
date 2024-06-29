@@ -18,8 +18,6 @@ import org.jdatepicker.impl.JDatePickerImpl;
 
 public class Controller {
 
-    private static List<KTP> listKtp = new ArrayList<>();
-
     public static boolean checkInput(
             JTextField nikField, JTextField namaField, JTextField tempatLahirField, JDatePickerImpl datePicker,
             ButtonGroup genderGroup, ButtonGroup bloodGroup, JTextField alamatField, JTextField rtField,
@@ -253,20 +251,35 @@ public class Controller {
     }
 
     public static KTP createKTP(String nik, String nama, String tempatLahir, String tanggalLahir, JenisKelamin jenisKelamin, String golDarah, String alamat, String rt, String rw, String kelDesa, String kecamatan,
-            JenisAgama agama, StatusPerkawinan statusPerkawinan, String pekerjaan, String kewarganegaraan, String wargaNegaraAsal, File photoFile, File signatureFile, String berlakuHingga, String kotaPembuatan, String tanggalPembuatan) {
+            JenisAgama agama, StatusPerkawinan statusPerkawinan, String pekerjaan, String kewarganegaraan, String wargaNegaraAsal, File photoFile, File signatureFile, String berlakuHingga, String kotaPembuatan, String tanggalPembuatan, int actionValue) {
         
         KTP ktp = new KTP(nik, nama, tempatLahir, tanggalLahir, jenisKelamin, golDarah, alamat, rt, rw, kelDesa, kecamatan,
                                 agama, statusPerkawinan, pekerjaan, kewarganegaraan, wargaNegaraAsal, photoFile,
                                 signatureFile, berlakuHingga, kotaPembuatan, tanggalPembuatan);
+        
+        if (actionValue == 1) {
+            
+            DBController.insertNewUser(ktp); // ADD TO DATABASE
+
+        }
+        else {
+
+            DBController.updateData(ktp);
+
+        }
 
         return ktp;
 
     }
 
-    public static void addKtp(KTP ktp) {
+    public static String[] setSelectedJobs(String jobs) {
 
-        listKtp.add(ktp);
+        String[] listJobs = jobs.split(", ");
 
-    } 
+        return listJobs;
+
+    }
+
+
 
 }
