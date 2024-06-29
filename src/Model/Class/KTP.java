@@ -41,6 +41,10 @@ public class KTP {
                 + ", kotaPembuatan=" + kotaPembuatan + ", tanggalPembuatan=" + tanggalPembuatan + "]";
     }
 
+    public KTP () {
+        
+    }
+
     public KTP(String nik, String nama, String tempatLahir, String tanggalLahir, JenisKelamin jenisKelamin,
             String golDarah, String alamat, String rt, String rw, String kelDesa, String kecamatan, JenisAgama agama,
             StatusPerkawinan statusPerkawinan, String pekerjaan, String kewarganegaraan, String wargaNegaraAsal,
