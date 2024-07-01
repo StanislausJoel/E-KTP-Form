@@ -51,10 +51,10 @@ public class FormPencarianData {
 
             if (!keyField.getText().isEmpty()) {
                 
-                frame.dispose();
-
+                
                 if (DBController.getKTP(keyField.getText()) != null) {
                     
+                    frame.dispose();
                     new FormInputData(2, DBController.getKTP(keyField.getText()));
 
                 }
